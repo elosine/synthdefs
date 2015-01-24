@@ -136,10 +136,11 @@ SynthDef("petalsOfResonance", {
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
 			fund: ControlSpec(20, 20000, \exp, 0, 440, units: " Hz"),
 			firstPartial: ControlSpec(0, 99, \lin, default: 0, units: "partial"),
-			bank2MidiOffset: ControlSpec(0, 36, \lin, default: 0, units: "midioffset"),
+			bank2MidiOffset: ControlSpec(-36.0, 36.0, \lin, default: 0, units: "midioffset"),
 			spread: ControlSpec(0, 12, \lin, default: 1, units: "spread"),
 			ringL1: ControlSpec(0.1, 49, \lin, default: 5, units: "seconds"),
 			ringL2: ControlSpec(0.1, 49, \lin, default: 9, units: "seconds"),
+			t_tr: ControlSpec(0, 1, \lin, default: 0, units: "trig"),
 			inputLen: ControlSpec(0.03, 21, \lin, default: 1.3, units: "seconds")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
