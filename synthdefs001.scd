@@ -127,8 +127,8 @@ SynthDef("petalsOfResonance", {
 
 	}, metadata: (
 		specs: (
-			masteramp: ControlSpec(-inf, 18, \lin, default: -6.0, units: "db"),
-			inamp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db"),
+			masteramp: ControlSpec(-120.0, 18, \lin, default: -6.0, units: "db"),
+			inamp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db"),
 			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
@@ -150,10 +150,10 @@ SynthDef("petalsOfResonance", {
  ////                              /////
 ///////////////////////////////////////
 SynthDef( \audioin_mono, {
-	arg ibs, obs, kbs, amp=1;
-	var in, rms;
-	in = SoundIn.ar(ibs)*amp;
-	rms = Amplitude.kr(in).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
+	arg ibs, obs, kbs, amp=0;
+	var in, rms, ampv;
+	in = SoundIn.ar(ibs)*amp.dbamp;
+	rms = Amplitude.kr(in);
 	Out.kr(kbs, rms); //send rms amplitude measure to a control bus
 	Out.ar(obs, in)
 	}, metadata: (
@@ -161,7 +161,7 @@ SynthDef( \audioin_mono, {
 			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
-			amp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db")
+			amp: ControlSpec(-120, 18, \lin, default: 0.0, units: "db")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
 
@@ -172,10 +172,10 @@ SynthDef( \audioin_mono, {
  ////                              /////
 ///////////////////////////////////////
 SynthDef( \audioOut_mono, {
-		arg ibs, obs, kbs, amp=1;
+		arg ibs, obs, kbs, amp=0;
 		var in, rms;
-		in = In.ar(ibs)*amp;
-		rms = Amplitude.kr(in).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
+		in = In.ar(ibs)*amp.dbamp;
+		rms = Amplitude.kr(in);
 		Out.kr(kbs, rms); //send rms amplitude measure to a control bus
 		Out.ar(obs, in)
 	}, metadata: (
@@ -183,7 +183,7 @@ SynthDef( \audioOut_mono, {
 			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
-			amp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db")
+			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
 
@@ -196,8 +196,8 @@ SynthDef( \audioOut_mono, {
 SynthDef( \audioOut_stereo, {
 	arg ibs, obs, kbs, amp=1;
 	var in, rms;
-	in = In.ar([ibs, ibs+1])*amp;
-	rms = Amplitude.kr(in).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
+	in = In.ar([ibs, ibs+1])*amp.dbamp;
+	rms = Amplitude.kr(in);
 	Out.kr(kbs, rms); //send rms amplitude measure to a control bus
 	Out.ar(obs, in)
 	}, metadata: (
@@ -205,7 +205,7 @@ SynthDef( \audioOut_stereo, {
 			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
-			amp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db")
+			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
 
@@ -216,12 +216,12 @@ SynthDef( \audioOut_stereo, {
  ////                              /////
 ///////////////////////////////////////
 SynthDef(\sineWlfo, {
-	arg obs, kbs, rate=0, freqlo=300, freqhi=300, amp=1;
+	arg obs, kbs, rate=0, freqlo=300, freqhi=300, amp=0;
 	var sig, lfo, rms;
 	lfo = SinOsc.kr(rate).range(freqlo, freqhi);
 	sig = SinOsc.ar(lfo);
-	sig = sig*amp;
-	rms = Amplitude.kr(sig).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
+	sig = sig*amp.dbamp;
+	rms = Amplitude.kr(sig);
 	Out.kr(kbs, rms); //send rms amplitude measure to a control bus
 	Out.ar(obs, sig)
 	}, metadata: (
@@ -231,7 +231,7 @@ SynthDef(\sineWlfo, {
 			rate: ControlSpec(0, 99, \lin, default: 0.0, units: "Hz"),
 			freqlo: ControlSpec(20, 20000, \exp, 0, 300, units: " Hz"),
 			freqhi: ControlSpec(20, 20000, \exp, 0, 300, units: " Hz"),
-			amp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db")
+			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
 
@@ -242,11 +242,11 @@ SynthDef(\sineWlfo, {
  ////                              /////
 ///////////////////////////////////////
 SynthDef(\noiseBurst, {
-		arg obs, kbs, rate=1.0, atk=0.03, decay=0.75, amp=1;
+		arg obs, kbs, rate=1.0, atk=0.03, decay=0.75, amp=0;
 		var sig, rms;
 		sig = PinkNoise.ar(0.5) * Decay2.ar( Impulse.ar(rate), atk, decay );
-		sig = sig*amp;
-		rms = Amplitude.kr(sig).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
+		sig = sig*amp.dbamp;
+		rms = Amplitude.kr(sig);
 		Out.kr(kbs, rms); //send rms amplitude measure to a control bus
 		Out.ar(obs, sig)
 	}, metadata: (
@@ -256,7 +256,7 @@ SynthDef(\noiseBurst, {
 			rate: ControlSpec(0, 99, \lin, default: 0.0, units: "Hz"),
 			atk: ControlSpec(0.0, 9, \lin, 0, 0.01, units: "seconds"),
 			decay: ControlSpec(0.0, 33.0, \lin, 0, 1.0, units: "seconds"),
-			amp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db")
+			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
 
@@ -267,19 +267,19 @@ SynthDef(\noiseBurst, {
  ////                              /////
 ///////////////////////////////////////
 SynthDef(\ringmod, {
-		arg obs, kbs, carbus, modbus, amp=1;
+		arg obs, kbs, carbus, modbus, amp=0;
 		var rm, rms;
-		rm = DiodeRingMod.ar(In.ar(carbus), In.ar(modbus));
-		rms = Amplitude.kr(rm).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
+		rm = DiodeRingMod.ar(In.ar(carbus), In.ar(modbus))*amp.dbamp;
+		rms = Amplitude.kr(rm);
 		Out.kr(kbs, rms); //send rms amplitude measure to a control bus
-		Out.ar(obs, rm*amp)
+		Out.ar(obs, rm)
 	}, metadata: (
 		specs: (
 			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
 			carbus: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			modbus: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
-			amp: ControlSpec(-inf, 18, \lin, default: 0.0, units: "db")
+			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
 ).load.store(mdPlugin:TextArchiveMDPlugin);
 
