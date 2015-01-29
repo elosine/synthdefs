@@ -158,7 +158,7 @@ SynthDef( \audioin_mono, {
 	Out.ar(obs, in)
 	}, metadata: (
 		specs: (
-			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
+			ibs: ControlSpec(0, 8, step: 1),
 			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
 			amp: ControlSpec(-120, 18, \lin, default: 0.0, units: "db")
@@ -175,13 +175,13 @@ SynthDef( \audioOut_mono, {
 		arg ibs, obs, kbs, amp=0;
 		var in, rms;
 		in = In.ar(ibs)*amp.dbamp;
-		rms = Amplitude.kr(in);
+	rms = Amplitude.kr(in).ampdb.linlin(-80.0, 0.0, 0.0, 1.0);
 		Out.kr(kbs, rms); //send rms amplitude measure to a control bus
 		Out.ar(obs, in)
 	}, metadata: (
 		specs: (
 			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
-			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
+			obs: ControlSpec(0, 49, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
 			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
@@ -203,7 +203,7 @@ SynthDef( \audioOut_stereo, {
 	}, metadata: (
 		specs: (
 			ibs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
-			obs: ControlSpec(0, Server.default.options.numAudioBusChannels-1, step: 1),
+			obs: ControlSpec(0, 49, step: 1),
 			kbs: ControlSpec(0, Server.default.options.numControlBusChannels-1, step: 1),
 			amp: ControlSpec(-120.0, 18, \lin, default: 0.0, units: "db")
 	))
